@@ -1,0 +1,83 @@
+name: Autograding Tests
+'on':
+- push
+- repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Test empty stack
+      id: test-empty-stack
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Test empty stack
+        setup-command: mvn compile
+        command: mvn -Dtest=StackTests#emptyStackTest test
+        timeout: 10
+    - name: Push and pop test
+      id: push-and-pop-test
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Push and pop test
+        setup-command: mvn compile
+        command: mvn -Dtest=StackTests#pushPopStackTest test
+        timeout: 10
+    - name: Over fill the stack test
+      id: over-fill-the-stack-test
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Over fill the stack test
+        setup-command: mvn compile
+        command: mvn -Dtest=StackTests#overFillStackTest test
+        timeout: 10
+    - name: Reset the stack
+      id: reset-the-stack
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Reset the stack
+        setup-command: mvn compile
+        command: mvn -Dtest=StackTests#resetStackTest test
+        timeout: 10
+    - name: Peek test
+      id: peek-test
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Peek test
+        setup-command: mvn compile
+        command: mvn -Dtest=StackTests#peekTest test
+        timeout: 10
+    - name: Really overgrow the stack
+      id: really-overgrow-the-stack
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Really overgrow the stack
+        setup-command: mvn compile
+        command: mvn -Dtest=StackTests#reallyGrowTheStack test
+        timeout: 10
+    - name: Test that capacity is not the size
+      id: test-that-capacity-is-not-the-size
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Test that capacity is not the size
+        setup-command: mvn compile
+        command: mvn -Dtest=StackTests#testCapacityIsNotTheSize test
+        timeout: 10
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        TEST-EMPTY-STACK_RESULTS: "${{steps.test-empty-stack.outputs.result}}"
+        PUSH-AND-POP-TEST_RESULTS: "${{steps.push-and-pop-test.outputs.result}}"
+        OVER-FILL-THE-STACK-TEST_RESULTS: "${{steps.over-fill-the-stack-test.outputs.result}}"
+        RESET-THE-STACK_RESULTS: "${{steps.reset-the-stack.outputs.result}}"
+        PEEK-TEST_RESULTS: "${{steps.peek-test.outputs.result}}"
+        REALLY-OVERGROW-THE-STACK_RESULTS: "${{steps.really-overgrow-the-stack.outputs.result}}"
+        TEST-THAT-CAPACITY-IS-NOT-THE-SIZE_RESULTS: "${{steps.test-that-capacity-is-not-the-size.outputs.result}}"
+      with:
+        runners: test-empty-stack,push-and-pop-test,over-fill-the-stack-test,reset-the-stack,peek-test,really-overgrow-the-stack,test-that-capacity-is-not-the-size

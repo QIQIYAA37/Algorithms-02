@@ -1,0 +1,34 @@
+@startuml
+set separator none
+package oy.tol.tra {
+  interface StackInterface<E> {
+    +int capacity()
+    +void push(E element)
+    +E pop()
+    +E peek()
+    +int size()
+    +boolean isEmpty()
+    +void clear()
+  }
+  class StackFactory {
+    +{static}StackInterface<Integer> createIntegerStack(int capacity)
+  }
+  class StackImplementation implements StackInterface {
+    -Object[] itemArray
+    -int capacity
+    -int currentIndex
+  }
+  class StackImplementation #pink;line:red
+  StackFactory ..> StackImplementation : instantiates
+  StackImplementation ..> StackIsEmptyException : throws
+  StackImplementation ..> StackAllocationException : throws
+  StackTests ..> StackImplementation : tests
+
+}
+package java.lang {
+  class Exception
+}
+StackAllocationException --|> Exception
+StackIsEmptyException --|> Exception
+
+@enduml
